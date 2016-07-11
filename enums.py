@@ -30,3 +30,11 @@ class BillStatus(Enum):
     at_least_passed_second = (passed_second, to_executive, enacted)
     at_least_to_executive = (to_executive, enacted)
     at_least_enacted = (enacted,)
+
+class DocumentType(Enum):
+    press_release = 5
+    floor_statement = 7
+    dc_letter = 10
+    tweet = 6
+    facebook_post = 9
+    constituent_email = 24

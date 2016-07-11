@@ -5,6 +5,7 @@ sys.path.insert(1, os.path.dirname(os.getcwd()))
 from api import QuorumAPI
 import re
 from collections import Counter
+from enums import DocumentType
 
 # first, we subclass the QuorumAPI to support wordclouds.
 # to do this, we'll use the same approach as the count function
@@ -25,7 +26,7 @@ quorum_api = quorum_api.set_endpoint("document") \
                        .word_cloud(True) \
                        .filter(advanced_search="girls AND code")
 
-results = quorum_api.GET()
+# results = quorum_api.GET()
 
 # if you did the previous two steps correctly, you should now have
 # a list of dictionaries. This looks something like this:
@@ -50,7 +51,7 @@ def convert_wordcloud_api_results(results):
 
     return json.dumps(list_of_lists)
 
-print convert_wordcloud_api_results(results)
+# print convert_wordcloud_api_results(results)
 
 # now take those results, paste them into index.html,
 # and take a look at them in your browser!
@@ -58,8 +59,11 @@ print convert_wordcloud_api_results(results)
 # Extra Credit:
 # Now let's write our own wordcloud function that looks at documents directly.
 quorum_api = quorum_api.word_cloud(False) \
-                       .limit(1000)
+                       .limit(1) \
+                       .filter(document_type = DocumentType.tweet)
 new_results = quorum_api.GET()
+
+print new_results
 
 
 # We're now going to create a class that processes those results

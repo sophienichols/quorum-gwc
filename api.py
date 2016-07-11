@@ -39,14 +39,15 @@ class QuorumAPI(object):
     _limit = 20
     _offset = 0
     _count = True
-    filters = {
-                "decode_enums": True
-              }
+    filters = {}
 
     def __init__(self, username, api_key, endpoint=None):
 
         self.username = username
         self.api_key = api_key
+        self.filters = {
+                        "decode_enums": True
+                       }
 
         if endpoint:
             self.set_endpoint(endpoint)
