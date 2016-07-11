@@ -3,6 +3,8 @@ import sys
 import os
 sys.path.insert(1, os.path.dirname(os.getcwd()))
 from api import QuorumAPI
+import re
+from collections import Counter
 
 # first, we subclass the QuorumAPI to support wordclouds.
 # to do this, we'll use the same approach as the count function
@@ -63,12 +65,30 @@ new_results = quorum_api.GET()
 # We're now going to create a class that processes those results
 class WordCloud(object):
 
+    # regex to match urls within text
+    URL_REGEX = r"((http|https)://[^ \n]+)"
+
+    # regex to match punctuation within text. DOESN'T REPLACE #
+    # or @
+    PUNCTUATION_TO_ESCAPE = '!"$%&\'()*+,-./:;<=>?[\\]^_`{|}~.'
+    PUNCTUATION_REGEX = "[%s]" % re.escape(PUNCTUATION_TO_ESCAPE)
+    limit = 200
+
     def __init__(self, api_results):
         self.documents = api_results["objects"]
 
-    def remove_punctuation(self, string):
-        import string
-        return
+    def clean_string(self, string):
+        # remove all the urls from the text
+        url_subbed_text = re.sub(self.URL_REGEX,
+                                 "",
+                                 text)
+
+        # Remove all punctuation
+        punctuation_subbed_text = re.sub(self.PUNCTUATION_REGEX,
+                                         "",
+                                         url_subbed_text)
+
+        return punctuation_subbed_text
 
     def process(self):
         # first, combine all the documents into one giant string
@@ -76,6 +96,11 @@ class WordCloud(object):
             full_string += document.raw_content
 
         # now, remove all punctuation
+        full_string = self.clean_string(full_string)
+
+        frequency_tuples = Counter(full_string).most_common(self.limit)
+
+        return frequency_tuples
 
 wc = WordCloud(new_results)
 print wc.process()

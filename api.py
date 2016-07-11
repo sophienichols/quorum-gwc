@@ -26,7 +26,13 @@ class QuorumAPI(object):
     """
 
     # API constants
-    SUPPORTED_ENDPOINTS = ["person", "bill", "vote", "district", "state", "document", "legsession"]
+    SUPPORTED_ENDPOINTS = ["person",
+                           "bill",
+                           "vote",
+                           "district",
+                           "state",
+                           "document",
+                           "legsession"]
     BASE_URL = "https://www.quorum.us"
 
     # internal globals with defaults
@@ -56,7 +62,7 @@ class QuorumAPI(object):
 
     def count(self, return_count=True):
         if return_count in [True, False]:
-            self.count = return_count
+            self._count = return_count
         else:
             raise Exception('Must be a boolean value.')
 
@@ -64,7 +70,7 @@ class QuorumAPI(object):
 
     def limit(self, value=20):
         if isinstance(value, int):
-            self.limit = value
+            self._limit = value
         else:
             raise Exception('Must be a numeric value.')
 
@@ -72,7 +78,7 @@ class QuorumAPI(object):
 
     def offset(self, value=0):
         if isinstance(value, int):
-            self.offset = value
+            self._offset = value
         else:
             raise Exception('Must be a numeric value.')
 
