@@ -26,7 +26,7 @@ class QuorumAPI(object):
     """
 
     # API constants
-    SUPPORTED_ENDPOINTS = ["person", "bill", "vote", "district", "state", "document"]
+    SUPPORTED_ENDPOINTS = ["person", "bill", "vote", "district", "state", "document", "legsession"]
     BASE_URL = "https://www.quorum.us"
 
     # internal globals with defaults
@@ -85,8 +85,9 @@ class QuorumAPI(object):
         return self
 
     def process_request(self, request):
-        self.next_url = request["meta"]["next"]
-        self.previous_url = request["meta"]["previous"]
+        if isinstance(request, dict) and request.get("meta"):
+            self.next_url = request["meta"]["next"]
+            self.previous_url = request["meta"]["previous"]
 
     def NEXT(self):
         if hasattr(self, "next_url") and self.next_url:
@@ -117,6 +118,7 @@ class QuorumAPI(object):
 
         # set all the global vals as filters
         for attr in ["_count", "_limit", "_offset", "username", "api_key"]:
+
             if attr.startswith("_"):
                 key = attr[1:]
             else:
@@ -126,17 +128,19 @@ class QuorumAPI(object):
 
         # convert all the boolean values (True and False) to strings
         for key, value in self.filters.iteritems():
-            if value in [True, False]:
+            if value in [True, False] and isinstance(value, bool):
                 if value:
                     self.filters[key] = "true"
                 else:
                     self.filters[key] = "false"
 
+        #print self.filters
+
         initial_request = requests.get(self.BASE_URL + "/api/%s/" % self.endpoint,
                                        params = self.filters) \
                                   .json()
 
-        print initial_request
+        #print initial_request
 
         self.process_request(initial_request)
 
