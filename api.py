@@ -30,9 +30,9 @@ class QuorumAPI(object):
     BASE_URL = "https://www.quorum.us"
 
     # internal globals with defaults
-    limit = 20
-    offset = 0
-    count = True
+    _limit = 20
+    _offset = 0
+    _count = True
     filters = {
                 "decode_enums": True
               }
@@ -117,16 +117,24 @@ class QuorumAPI(object):
         """
 
         # set all the global vals as filters
-        for attr in ["count", "limit", "offset", "username", "api_key"]:
-            self.filters[attr] = getattr(self, attr)
+        for attr in ["_count", "_limit", "_offset", "username", "api_key"]:
+
+            if attr.startswith("_"):
+                key = attr[1:]
+            else:
+                key = attr
+
+            self.filters[key] = getattr(self, attr)
 
         # convert all the boolean values (True and False) to strings
         for key, value in self.filters.iteritems():
-            if value in [True, False]:
+            if value in [True, False] and isinstance(value, bool):
                 if value:
                     self.filters[key] = "true"
                 else:
                     self.filters[key] = "false"
+
+        print self.filters
 
         initial_request = requests.get(self.BASE_URL + "/api/%s/" % self.endpoint,
                                        params = self.filters) \
