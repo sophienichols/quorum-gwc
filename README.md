@@ -17,6 +17,8 @@ Each project has its own folder, appropriately named "trends", "choropleth", and
 
 ##Setting Up this Git Repository on Your Computer
 
+One common tool used in most software engineering is Github. We'll walk you through the basic steps of getting set up in Github here today, but you may also want to look into https://try.github.io/levels/1/challenges/1
+
 ###Cloning the Git repository
 1. On this page, click on the green button on the right side of the page above which says "Clone or download".
 2. Copy the URL.
@@ -28,8 +30,9 @@ Each project has its own folder, appropriately named "trends", "choropleth", and
 When using version control such as git, you often want to work on a separate branch from the master branch. Working on separate branches makes it much easier to organize different features or logic, test your code, and collaborate with your partners.
 
 To start a new branch:
+
 1. Make sure you are in the `quorum-gwc` directory. If not, `cd` into it.
-2. Run `git checkout -b [name_of_your_branch]
+2. Run `git checkout -b [name\_of\_your_branch]
 3. You're on your new branch!
 
 ###Committing, Pushing, and the Like
@@ -47,5 +50,3 @@ Once you've gotten to a place in your code where you want to "save", it's time t
 3. Double check to make sure that there are no merge conflicts. If there are any, you should pull the master branch, merge it into your branch, fix any conflicts, and then
 4. In the request that you submit, you should describe what you did as well as assign people who should review this code.
 5. Congrats, you have submitted a pull request!
-
->>>>>>> 74d712f709341c8b7e137aa4af43164d7e5789fa
