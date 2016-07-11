@@ -1,3 +1,8 @@
+# this sets your path correctly so the imports work
+import sys
+import os
+sys.path.insert(1, os.path.dirname(os.getcwd()))
+
 from api import QuorumAPI
 from enums import RoleType
 from enums import BillStatus
@@ -5,13 +10,15 @@ import csv
 
 class ChoroplethVisualizer(object):
 
-    def __init__(self):
-        self.members_by_state = self.get_members_by_state()
+    # key and username stay the same so initialize API object once
+
+    quorum_api = QuorumAPI(username="gwc", api_key="691e43c415d88cd16286edb1f78abb2e348688da")
 
     """
-    helper function which given a dictionary produces a CSV file.
+    This is a helper function that produces the 2-column ('state', 'num') CSV file
+    when given a dictionary of (state, number) key-value pairs.
     """
-    def save_csv(item_dict):
+    def save_state_csv(item_dict):
         with open('data.csv', 'wb') as f:
             w = csv.writer(f, fieldnames=['state', 'num'], delimiter=',')
             w.writerow(('state', 'num'))
@@ -21,26 +28,28 @@ class ChoroplethVisualizer(object):
     create cache dictionary with lists of member ids keyed by state
     """
     def get_members_by_state(self):
+
         # the dictionary that we will populate with this info!
         members_by_state = {}
 
         # get state info using the api call
-        quorum_api = QuorumAPI(username="gwc", api_key="691e43c415d88cd16286edb1f78abb2e348688da")
+        
         quorum_api = quorum_api.set_endpoint("state") \
                         .count(True) \
                         .offset(20) \
+                        .filter()
         states = quorum_api.GET()
 
         # iterate over each state that was returned above
         for state in states:
             state_id = state.id
-            fips_num = state.state_id
+            #fips_num = state.state_id
 
             # let's get the list of senators/representatives from each state
             quorum_api = quorum_api.set_endpoint("person") \
                             .count(True) \
                             .offset(20) \
-                            .filter(most_recent_state = state_id, current=True) \
+                            .filter(most_recent_state = state_id, current=True)
             members = quorum_api.GET()
 
             # construct a list of ids of the members from this state
@@ -57,7 +66,7 @@ class ChoroplethVisualizer(object):
         Write this to the data.csv file that will then be used
         """
         # get the dictionary of lists of members from each state
-        members_by_state = getMembersByState()
+        members_by_state = get_members_by_state()
 
         # this is the dictionary that will be populated with the number of word mentions per state
         mentions_per_state = {}
@@ -67,7 +76,7 @@ class ChoroplethVisualizer(object):
                             .offset(20) \
         # iterate over the lists in our dictionary, keyed by state
         for state, member_lst in members_by_state.iteritems():
-            comma_id_lst = ','.join(map(str, member_lst))
+            #comma_id_lst = ','.join(map(str, member_lst))
             # get all documents which mention the desired word from the state in question
             quorum_api = quorum_api.filter(advanced_search = word, source_members = member_lst)
             results = quorum_api.GET()
@@ -78,8 +87,16 @@ class ChoroplethVisualizer(object):
         save_csv(mentions_per_state)
 
 
+word = "potato"
 
-
+quorum_api = QuorumAPI(username="gwc", api_key="691e43c415d88cd16286edb1f78abb2e348688da")
+quorum_api = quorum_api.set_endpoint("document") \
+                    .count(True) \
+                    .offset(20) \
+                    .limit(1) \
+                    .filter(advanced_search = word)
+print quorum_api
+print quorum_api.GET()
 
 
 

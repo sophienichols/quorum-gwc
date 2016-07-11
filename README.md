@@ -32,7 +32,7 @@ When using version control such as git, you often want to work on a separate bra
 To start a new branch:
 
 1. Make sure you are in the `quorum-gwc` directory. If not, `cd` into it.
-2. Run `git checkout -b [name\_of\_your_branch]
+2. Run `git checkout -b [name\_of\_your\_branch]
 3. You're on your new branch!
 
 ###Committing, Pushing, and the Like

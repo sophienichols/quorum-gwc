@@ -14,12 +14,11 @@ class QuorumAPI(object):
 
     Example:
     quorum_api = QuorumAPI(username="gwc", api_key="691e43c415d88cd16286edb1f78abb2e348688da")
-    quorum_api.set_endpoint("person")
     quorum_api = quorum_api.set_endpoint("person") \
                     .count(True) \
                     .limit(100) \
                     .offset(20) \
-                    .filter(role_type = RoleType.senator, current=True) \
+                    .filter(role_type = RoleType.senator, current=True)
 
     results = quorum_api.GET()
     next_results = quorum_api.NEXT()
@@ -31,9 +30,9 @@ class QuorumAPI(object):
     BASE_URL = "https://www.quorum.us"
 
     # internal globals with defaults
-    limit = 20
-    offset = 0
-    count = True
+    _limit = 20
+    _offset = 0
+    _count = True
     filters = {
                 "decode_enums": True
               }
@@ -57,7 +56,7 @@ class QuorumAPI(object):
 
     def count(self, return_count=True):
         if return_count in [True, False]:
-            self.count = return_count
+            self._count = return_count
         else:
             raise Exception('Must be a boolean value.')
 
@@ -65,7 +64,7 @@ class QuorumAPI(object):
 
     def limit(self, value=20):
         if isinstance(value, int):
-            self.limit = value
+            self._limit = value
         else:
             raise Exception('Must be a numeric value.')
 
@@ -73,7 +72,7 @@ class QuorumAPI(object):
 
     def offset(self, value=0):
         if isinstance(value, int):
-            self.offset = value
+            self._offset = value
         else:
             raise Exception('Must be a numeric value.')
 
@@ -91,7 +90,7 @@ class QuorumAPI(object):
 
     def NEXT(self):
         if hasattr(self, "next_url") and self.next_url:
-            self.offset += self.limit
+            self._offset += self._limit
             next_request = requests.get(self.BASE_URL + self.next_url).json()
             self.process_request(next_request)
 
@@ -101,7 +100,7 @@ class QuorumAPI(object):
 
     def PREVIOUS(self):
         if hasattr(self, "previous_url") and self.previous_url:
-            self.offset -= self.limit
+            self._offset -= self._limit
             next_request = requests.get(self.BASE_URL + self.previous_url).json()
             self.process_request(next_request)
 
@@ -117,8 +116,13 @@ class QuorumAPI(object):
         """
 
         # set all the global vals as filters
-        for attr in ["count", "limit", "offset", "username", "api_key"]:
-            self.filters[attr] = getattr(self, attr)
+        for attr in ["_count", "_limit", "_offset", "username", "api_key"]:
+            if attr.startswith("_"):
+                key = attr[1:]
+            else:
+                key = attr
+
+            self.filters[key] = getattr(self, attr)
 
         # convert all the boolean values (True and False) to strings
         for key, value in self.filters.iteritems():
@@ -131,6 +135,8 @@ class QuorumAPI(object):
         initial_request = requests.get(self.BASE_URL + "/api/%s/" % self.endpoint,
                                        params = self.filters) \
                                   .json()
+
+        print initial_request
 
         self.process_request(initial_request)
 
