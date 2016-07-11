@@ -18,7 +18,7 @@ class QuorumAPI(object):
                     .count(True) \
                     .limit(100) \
                     .offset(20) \
-                    .filter(role_type = RoleType.senator, current=True) \
+                    .filter(role_type = RoleType.senator, current=True)
 
     results = quorum_api.GET()
     next_results = quorum_api.NEXT()
@@ -26,7 +26,7 @@ class QuorumAPI(object):
     """
 
     # API constants
-    SUPPORTED_ENDPOINTS = ["person", "bill", "vote", "district", "state", "document"]
+    SUPPORTED_ENDPOINTS = ["person", "bill", "vote", "district", "state", "document", "legsession"]
     BASE_URL = "https://www.quorum.us"
 
     # internal globals with defaults
@@ -85,8 +85,9 @@ class QuorumAPI(object):
         return self
 
     def process_request(self, request):
-        self.next_url = request["meta"]["next"]
-        self.previous_url = request["meta"]["previous"]
+        if isinstance(request, dict) and request.get("meta"):
+            self.next_url = request["meta"]["next"]
+            self.previous_url = request["meta"]["previous"]
 
     def NEXT(self):
         if hasattr(self, "next_url") and self.next_url:
