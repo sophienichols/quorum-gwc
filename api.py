@@ -27,7 +27,7 @@ class QuorumAPI(object):
     """
 
     # API constants
-    SUPPORTED_ENDPOINTS = ["person", "bill", "vote", "district", "state"]
+    SUPPORTED_ENDPOINTS = ["person", "bill", "vote", "district", "state", "document"]
     BASE_URL = "https://www.quorum.us"
 
     # internal globals with defaults
