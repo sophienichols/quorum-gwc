@@ -6,6 +6,7 @@ from api import QuorumAPI
 import re
 from collections import Counter
 from enums import DocumentType
+from stop_words import stop_words
 
 # first, we subclass the QuorumAPI to support wordclouds.
 # to do this, we'll use the same approach as the count function
@@ -59,11 +60,9 @@ def convert_wordcloud_api_results(results):
 # Extra Credit:
 # Now let's write our own wordcloud function that looks at documents directly.
 quorum_api = quorum_api.word_cloud(False) \
-                       .limit(1) \
+                       .limit(1000) \
                        .filter(document_type = DocumentType.tweet)
 new_results = quorum_api.GET()
-
-print new_results
 
 
 # We're now going to create a class that processes those results
@@ -78,10 +77,8 @@ class WordCloud(object):
     PUNCTUATION_REGEX = "[%s]" % re.escape(PUNCTUATION_TO_ESCAPE)
     limit = 200
 
-    def __init__(self, api_results):
-        self.documents = api_results["objects"]
+    def clean_and_split(self, text):
 
-    def clean_string(self, string):
         # remove all the urls from the text
         url_subbed_text = re.sub(self.URL_REGEX,
                                  "",
@@ -92,19 +89,20 @@ class WordCloud(object):
                                          "",
                                          url_subbed_text)
 
-        return punctuation_subbed_text
+        return [word for word in punctuation_subbed_text.split(' ') if word not in stop_words and word != '']
 
-    def process(self):
+    def process(self, api_results):
         # first, combine all the documents into one giant string
-        for document in self.documents:
-            full_string += document.raw_content
+        full_string = ''
+        for document in api_results["objects"]:
+            full_string += document["raw_content"]
 
         # now, remove all punctuation
-        full_string = self.clean_string(full_string)
+        full_string = self.clean_and_split(full_string)
 
         frequency_tuples = Counter(full_string).most_common(self.limit)
 
         return frequency_tuples
 
-wc = WordCloud(new_results)
-print wc.process()
+wc = WordCloud()
+print wc.process(new_results)

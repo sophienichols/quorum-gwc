@@ -1,12 +1,9 @@
-from enum import Enum
-
-
-class RoleType(Enum):
+class RoleType(object):
     senator = 1
     representative = 2
 
 
-class BillType(Enum):
+class BillType(object):
     senate_bill = 2
     house_bill = 3
     senate_resolution = 4
@@ -17,7 +14,7 @@ class BillType(Enum):
     house_joint_resolution = 7
 
 
-class BillStatus(Enum):
+class BillStatus(object):
     introduced = 1
     out_of_committee = 2
     passed_first = 3
@@ -31,7 +28,8 @@ class BillStatus(Enum):
     at_least_to_executive = (to_executive, enacted)
     at_least_enacted = (enacted,)
 
-class DocumentType(Enum):
+
+class DocumentType(object):
     press_release = 5
     floor_statement = 7
     dc_letter = 10
