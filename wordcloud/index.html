@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Quorum Guns</title>
+</head>
+<body>
+
+<!-- Body is just the visualization -->
+<div id="wordcloud" data-content=""></div>
+
+
+<!-- Import D3.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
+<!-- Import Jquery -->
+<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script src="https://www.quorum.us/static/js/libs/d3.layout.cloud.js"></script>
+
+<!-- Word Cloud Script -->
+<script type="text/javascript">
+var WordCloud;
+
+WordCloud = function() {
+    var colors, complete, created, draw, fontSizeScale, h, layout, max_words, w, wordcloud;
+    created = false;
+    layout = null;
+    w = null;
+    h = null;
+    complete = 0;
+    max_words = 250;
+    colors = ["#303E60", "#4D2D5F"];
+    fontSizeScale = d3.scale.log().range([10, 100]);
+    // init wordcloud
+    wordcloud = function() {};
+
+    // Function to draw wordcloud
+    draw = function(words, bounds) {
+        var scale, text, vis;
+        if (bounds) {
+            scale = Math.min(w / Math.abs(bounds[1].x - w / 2), w / Math.abs(bounds[0].x - w / 2), h / Math.abs(bounds[1].y - h / 2), h / Math.abs(bounds[0].y - h / 2)) / 2;
+        } else {
+            scale = 1;
+        }
+        // add WordCloud to dom
+        vis = d3.select("#wordcloud").append("svg").attr("width", w).attr("height", h).append("g").attr("transform", "translate(" + w / 2 + "," + h / 2 + ")");
+        text = vis.selectAll("text").data(words);
+        text.transition().duration(1000).attr("transform", function(d) {
+            return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+        }).style("font-size", function(d) {
+            return fontSizeScale(d[1]) + "px";
+        });
+        text.enter().append("text").style("font-size", function(d) {
+            return fontSizeScale(d[1]) + "px";
+        }).style("font-family", '"Helvetica Neue", Helvetica').style("fill", function(d) {
+            return colors[Math.round(Math.random())];
+        }).attr("text-anchor", "middle").attr("transform", function(d) {
+            return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+        }).text(function(d) {
+            return d[0];
+        }).style("opacity", 1e-6).transition().duration(1000).style("opacity", 1);
+        return vis.transition().delay(1000).duration(750).attr("transform", "translate(" + [w >> 1, h >> 1] + ")scale(" + scale + ")");
+    };
+    wordcloud.create = function(data) {
+        var wordlist;
+        if (!created) {
+            w = $("body").width();
+            h = 700;
+            // $('#wordcloud').data('content').sort....
+            wordlist = data.sort(function(a, b) {
+                return b[1] - a[1];
+            });
+            fontSizeScale.domain(d3.extent(wordlist.map(function(d) {
+                return d[1];
+            })));
+            d3.layout.cloud().size([w, h]).text(function(d) {
+                return d[0];
+            }).padding(3).rotate(function() {
+                if (Math.random() * 3 > 1) {
+                    return 0;
+                } else {
+                    return 90;
+                }
+            }).font('"Helvetica Neue", Helvetica').fontSize(function(d) {
+                return fontSizeScale(d[1]);
+            }).on("end", draw).words(wordlist).start();
+        }
+        created = true;
+    };
+    return wordcloud;
+};
+
+$(document).ready(function () {
+    window.wordcloud = WordCloud();
+    window.wordcloud.create([["today", 11929], ["more", 10128], ["new", 6960], ["congress", 6707], ["work", 6697], ["house", 6439], ["day", 5880], ["help", 5643], ["community", 5546], ["health", 5238], ["time", 5045], ["people", 5019], ["national", 5001], ["american", 4849], ["years", 4759], ["bill", 4734], ["families", 4695], ["veterans", 4656], ["one", 4599], ["out", 4568], ["support", 4557], ["here", 4495], ["women", 4364], ["need", 4323], ["make", 4294], ["country", 3986], ["students", 3972], ["americans", 3965], ["office", 3937], ["federal", 3923], ["president", 3911], ["many", 3896], ["state", 3855], ["care", 3836], ["year", 3791], ["school", 3723], ["district", 3630], ["proud", 3604], ["week", 3499], ["continue", 3425], ["first", 3422], ["security", 3420], ["service", 3390], ["last", 3358], ["working", 3213], ["congressional", 3212], ["important", 3190], ["see", 3110], ["thank", 3097], ["states", 3054], ["join", 2994], ["rights", 2951], ["education", 2940], ["local", 2855], ["over", 2852], ["family", 2808], ["honor", 2767], ["jobs", 2763], ["now", 2762], ["legislation", 2727], ["world", 2685], ["nation", 2654], ["public", 2638], ["united", 2630], ["program", 2546], ["take", 2545], ["department", 2532], ["funding", 2492], ["law", 2460], ["ensure", 2402], ["right", 2386], ["washington", 2382], ["read", 2358], ["economy", 2358], ["protect", 2336], ["communities", 2331], ["county", 2312], ["2015", 2309], ["high", 2282], ["happy", 2270], ["forward", 2266], ["access", 2265], ["opportunity", 2249], ["please", 2230], ["services", 2229], ["members", 2221], ["know", 2220], ["government", 2213], ["visit", 2209], ["vote", 2193], ["through", 2184], ["together", 2169], ["keep", 2158], ["million", 2146], ["morning", 2115], ["against", 2093], ["thanks", 2089], ["during", 2058], ["children", 2049], ["city", 2042], ["future", 2040], ["nations", 2036], ["congressman", 2032], ["joined", 2024], ["learn", 2022], ["center", 2019], ["america", 2008], ["good", 2005], ["colleagues", 1995], ["made", 1987], ["college", 1963], ["lives", 1961], ["hope", 1951], ["issues", 1932], ["provide", 1885], ["way", 1874], ["yesterday", 1860], ["share", 1857], ["committee", 1844], ["home", 1840], ["better", 1832], ["information", 1831], ["bipartisan", 1825], ["month", 1821], ["republicans", 1798], ["next", 1786], ["including", 1771], ["business", 1763], ["leaders", 1756], ["violence", 1747], ["come", 1741], ["life", 1709], ["fight", 1708], ["discuss", 1705], ["economic", 1701], ["workers", 1696], ["businesses", 1689], ["anniversary", 1684], ["men", 1677], ["being", 1663], ["long", 1662], ["part", 1646], ["meeting", 1643], ["honored", 1639], ["small", 1638], ["look", 1637], ["affordable", 1635], ["address", 1632], ["call", 1613], ["history", 1606], ["pay", 1601], ["todays", 1593], ["full", 1589], ["military", 1588], ["safe", 1584], ["still", 1579], ["congratulations", 1556], ["job", 1551], ["back", 1536], ["best", 1528], ["sure", 1527], ["well", 1527], ["social", 1522], ["below", 1520], ["two", 1519], ["young", 1510], ["end", 1501], ["efforts", 1492], ["everyone", 1485], ["critical", 1483], ["safety", 1471], ["programs", 1471], ["trade", 1471], ["want", 1463], ["very", 1460], ["stop", 1452], ["celebrate", 1446], ["ago", 1428], ["meet", 1420], ["news", 1418], ["south", 1417], ["action", 1411], ["system", 1406], ["both", 1405], ["justice", 1400], ["equality", 1400], ["live", 1398], ["san", 1395], ["university", 1391], ["down", 1378], ["event", 1365], ["check", 1357], ["obama", 1352], ["resources", 1344], ["change", 1343], ["transportation", 1333], ["another", 1326], ["equal", 1317], ["passed", 1317], ["plan", 1315]])
+    })
+</script>
+
+</body>
+</html>
