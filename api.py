@@ -14,7 +14,6 @@ class QuorumAPI(object):
 
     Example:
     quorum_api = QuorumAPI(username="gwc", api_key="691e43c415d88cd16286edb1f78abb2e348688da")
-    quorum_api.set_endpoint("person")
     quorum_api = quorum_api.set_endpoint("person") \
                     .count(True) \
                     .limit(100) \

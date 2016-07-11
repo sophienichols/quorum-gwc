@@ -1,3 +1,8 @@
+# this sets your path correctly so the imports work
+import sys
+import os
+sys.path.insert(1, os.path.dirname(os.getcwd()))
+
 from api import QuorumAPI
 from enums import RoleType
 from enums import BillStatus
@@ -16,7 +21,7 @@ class ChoroplethVisualizer(object):
 
     # counts the instances of the given word in string
     def wordCountPerString(text, word):
-   
+
     #def saveCsv():
 
     # create cache dictionary with lists of member ids keyed by state
