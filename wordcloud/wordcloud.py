@@ -3,6 +3,10 @@ import sys
 import os
 sys.path.insert(1, os.path.dirname(os.getcwd()))
 from api import QuorumAPI
+import re
+from collections import Counter
+from enums import DocumentType
+from stop_words import stop_words
 
 # first, we subclass the QuorumAPI to support wordclouds.
 # to do this, we'll use the same approach as the count function
@@ -23,7 +27,7 @@ quorum_api = quorum_api.set_endpoint("document") \
                        .word_cloud(True) \
                        .filter(advanced_search="girls AND code")
 
-results = quorum_api.GET()
+# results = quorum_api.GET()
 
 # if you did the previous two steps correctly, you should now have
 # a list of dictionaries. This looks something like this:
@@ -48,7 +52,7 @@ def convert_wordcloud_api_results(results):
 
     return json.dumps(list_of_lists)
 
-print convert_wordcloud_api_results(results)
+# print convert_wordcloud_api_results(results)
 
 # now take those results, paste them into index.html,
 # and take a look at them in your browser!
@@ -56,26 +60,49 @@ print convert_wordcloud_api_results(results)
 # Extra Credit:
 # Now let's write our own wordcloud function that looks at documents directly.
 quorum_api = quorum_api.word_cloud(False) \
-                       .limit(1000)
+                       .limit(1000) \
+                       .filter(document_type = DocumentType.tweet)
 new_results = quorum_api.GET()
 
 
 # We're now going to create a class that processes those results
 class WordCloud(object):
 
-    def __init__(self, api_results):
-        self.documents = api_results["objects"]
+    # regex to match urls within text
+    URL_REGEX = r"((http|https)://[^ \n]+)"
 
-    def remove_punctuation(self, string):
-        import string
-        return
+    # regex to match punctuation within text. DOESN'T REPLACE #
+    # or @
+    PUNCTUATION_TO_ESCAPE = '!"$%&\'()*+,-./:;<=>?[\\]^_`{|}~.'
+    PUNCTUATION_REGEX = "[%s]" % re.escape(PUNCTUATION_TO_ESCAPE)
+    limit = 200
 
-    def process(self):
+    def clean_and_split(self, text):
+
+        # remove all the urls from the text
+        url_subbed_text = re.sub(self.URL_REGEX,
+                                 "",
+                                 text)
+
+        # Remove all punctuation
+        punctuation_subbed_text = re.sub(self.PUNCTUATION_REGEX,
+                                         "",
+                                         url_subbed_text)
+
+        return [word for word in punctuation_subbed_text.split(' ') if word not in stop_words and word != '']
+
+    def process(self, api_results):
         # first, combine all the documents into one giant string
-        for document in self.documents:
-            full_string += document.raw_content
+        full_string = ''
+        for document in api_results["objects"]:
+            full_string += document["raw_content"]
 
         # now, remove all punctuation
+        full_string = self.clean_and_split(full_string)
 
-wc = WordCloud(new_results)
-print wc.process()
+        frequency_tuples = Counter(full_string).most_common(self.limit)
+
+        return frequency_tuples
+
+wc = WordCloud()
+print wc.process(new_results)

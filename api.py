@@ -26,21 +26,28 @@ class QuorumAPI(object):
     """
 
     # API constants
-    SUPPORTED_ENDPOINTS = ["person", "bill", "vote", "district", "state", "document", "legsession"]
+    SUPPORTED_ENDPOINTS = ["person",
+                           "bill",
+                           "vote",
+                           "district",
+                           "state",
+                           "document",
+                           "legsession"]
     BASE_URL = "https://www.quorum.us"
 
     # internal globals with defaults
     _limit = 20
     _offset = 0
     _count = True
-    filters = {
-                "decode_enums": True
-              }
+    filters = {}
 
     def __init__(self, username, api_key, endpoint=None):
 
         self.username = username
         self.api_key = api_key
+        self.filters = {
+                        "decode_enums": True
+                       }
 
         if endpoint:
             self.set_endpoint(endpoint)
