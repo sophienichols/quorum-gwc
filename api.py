@@ -98,7 +98,7 @@ class QuorumAPI(object):
 
     def NEXT(self):
         if hasattr(self, "next_url") and self.next_url:
-            self.offset += self.limit
+            self._offset += self._limit
             next_request = requests.get(self.BASE_URL + self.next_url).json()
             self.process_request(next_request)
 
@@ -108,7 +108,7 @@ class QuorumAPI(object):
 
     def PREVIOUS(self):
         if hasattr(self, "previous_url") and self.previous_url:
-            self.offset -= self.limit
+            self._offset -= self._limit
             next_request = requests.get(self.BASE_URL + self.previous_url).json()
             self.process_request(next_request)
 
@@ -144,8 +144,11 @@ class QuorumAPI(object):
         print self.filters
 
         initial_request = requests.get(self.BASE_URL + "/api/%s/" % self.endpoint,
-                                       params = self.filters) \
-                                  .json()
+                                       params = self.filters)
+                                  
+        print initial_request.url
+
+        initial_request = initial_request.json()
 
         self.process_request(initial_request)
 
