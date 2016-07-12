@@ -1,4 +1,4 @@
-# quorum-gwc
+# quorum-gwc ~wow~
 ## Code for the Girls Who Code Hackathon
 
 Welcome to the Girls Who Code Congressional Hackathon! We've put together three different types of projects that you can work on. All three of these projects depend on the QuorumAPI class that we built together earlier today, and we're excited to let you start using it.
