@@ -35,26 +35,28 @@ class ChoroplethVisualizer(object):
         # as this will help us get the associated members.
         quorum_api = self.quorum_api.set_endpoint("state") \
                         .count(True) \
-                        .offset(20) \
+                        .limit(100) \
                         .filter()
         # what we get back is a bunch of "state objects",
         # where each object contains information about a state
         # such as its id, abbreviation, geographical coordinates, etc.
         states = quorum_api.GET()
-        # Now we need to access the 'id' field of each state object from above.
+
+        print states
+
+        # Now we need to access the 'id' and 'name' fields of each state object from above.
         # The GET() call should have returned an object for every state,
         # so we now want to iterate over each of these objects to grab the id,
         # and then use this id to find members of congress from this state.
         for state in states["objects"]:
             state_id = state["id"]
-            print state_id
+            state_name = state["name"]
             # let's get the list of senators/representatives from each state!
             # remember, we can filter on the "most_recent_state" field, which
             # contains the id of the state where the member is from.
             # Don't forget to set the appropriate endpoint!
             quorum_api = self.quorum_api.set_endpoint("person") \
                             .count(True) \
-                            .offset(20) \
                             .limit(100) \
                             .filter(most_recent_state = state_id, current=True)
             members = quorum_api.GET()
@@ -63,11 +65,10 @@ class ChoroplethVisualizer(object):
             # but all we want to store is a list of id numbers of each member.
             # Let's construct a list of ids of the members from this state!
             member_ids = [member["id"] for member in members["objects"]]
-            print member_ids
             # Now let us put the information in the dictionary we are building.
             # Remember that the state_id is the key and the list of member ids is the value.
-            members_by_state[state_id] = member_ids
-
+            members_by_state[state_name] = member_ids
+            print members_by_state
         return members_by_state
 
     # this function saves the function above as a file in an efficient way
@@ -78,11 +79,16 @@ class ChoroplethVisualizer(object):
             json.dump(members_by_state, f)
 
 
-    # A helper function which parses the file "members_by_state.json",
+    # Below is a helper function which will try to open the file "members_by_state.json",
     # which contains a dictionary where you can look up lists of member ids
-    # given a state.
+    # given a state. If it doesn't exist, it will run the above files and save it.
+    # (tl;dr: use this to get the dictionary of member id lists for each state.)
     def parse_members_by_state_json(self):
-        with open('member_by_state.json', 'rb') as f:
+        path_name = 'member_by_state.json'
+        if not os.path.isfile(path_name):
+             self.save_members_by_state_json()
+
+        with open(path_name, 'rb') as f:
             data = json.load(f)
         return data
 
@@ -94,10 +100,11 @@ class ChoroplethVisualizer(object):
     # Alaska, 5
     # ...etc.
     # We can use the csv class that we imported above.
-    def save_state_csv(self, item_dict):
+    def save_state_csv(self, item_dict, file_name):
         # we want to use python's 'with...as' syntax because 
         # it is a safe way to open and write files.
-        with open('data_test.csv', 'wb') as f:
+        with open(file_name, 'wb') as f:
+            print "GOT HERE DOE"
             w = csv.writer(f, delimiter=',')
             w.writerow(('state', 'num'))
             w.writerows(item_dict.items())
@@ -108,45 +115,26 @@ class ChoroplethVisualizer(object):
         get the number of documents that the given word is mentioned in each state.
         Write this to the data.csv file that will then be used
         """
-        # get the dictionary of lists of members from each state
-        members_by_state = self.get_members_by_state()
+        # Use the provided parse function above to get a dictionary with key,value pairs of
+        # state names and the lists of members from that state, respectively.
+        members_by_state = self.parse_members_by_state_json()
 
         # this is the dictionary that will be populated with the number of word mentions per state
         mentions_per_state = {}
         quorum_api = self.quorum_api.set_endpoint("document") \
                             .count(True) \
-                            .offset(20) \
+                            .limit(100) \
         # iterate over the lists in our dictionary, keyed by state
         for state, member_lst in members_by_state.iteritems():
             #comma_id_lst = ','.join(map(str, member_lst))
-            # get all documents which mention the desired word from the state in question
-            quorum_api = quorum_api.filter(advanced_search = word, source_person__in = member_lst)
+            # get the number of documents which mention the desired word from the state in question.
+            # (hint: remember the count_only filter!!)
+            quorum_api = quorum_api.filter(count_only = True, advanced_search = word, source_person__in = member_lst)
             results = quorum_api.GET()
-
             # store the number of documents for this state
-            mentions_per_state[state] = results["meta"]["total_count"]
+            mentions_per_state[state] = results
+        self.save_state_csv(mentions_per_state, 'data.csv')
 
-        self.save_csv(mentions_per_state)
+cv = ChoroplethVisualizer()
 
-word = "potato"
-member_lst = [300043, 300011]
-
-quorum_api = QuorumAPI(username="gwc", api_key="691e43c415d88cd16286edb1f78abb2e348688da")
-quorum_api = quorum_api.set_endpoint("document") \
-                    .count(True) \
-                    .offset(0) \
-                    .limit(2) \
-                    .filter(advanced_search = word, source_person__in = member_lst)
-print quorum_api.GET()["meta"]["total_count"]
-
-quorum_api = quorum_api.set_endpoint("person") \
-                            .count(True) \
-                            .offset(20) \
-                            .limit(100) \
-                            .filter(most_recent_state=51, current=True)
-members = quorum_api.GET()
-
-
-
-
-
+print cv.get_word_mentions_per_state("potato")

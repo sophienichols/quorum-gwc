@@ -141,13 +141,14 @@ class QuorumAPI(object):
                 else:
                     self.filters[key] = "false"
 
-        #print self.filters
+        print self.filters
 
         initial_request = requests.get(self.BASE_URL + "/api/%s/" % self.endpoint,
-                                       params = self.filters) \
-                                  .json()
+                                       params = self.filters)
+                                  
+        print initial_request.url
 
-        #print initial_request
+        initial_request = initial_request.json()
 
         self.process_request(initial_request)
 
