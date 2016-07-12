@@ -54,12 +54,47 @@ class ChoroplethVisualizer(object):
         Creates a dictionary with state names as keys
         and representatives/senators from those states as values.
         """
+        members_by_state = {}
+
+        quorum_api = self.quorum_api.set_endpoint("state") \
+                        .count(True) \
+                        .limit(100) \
+                        .filter()
+        states = quorum_api.GET()
+
+        for state in states["objects"]:
+            state_id = state["id"]
+            state_name = state["name"]
+            
+            quorum_api = self.quorum_api.set_endpoint("person") \
+                            .count(True) \
+                            .limit(100) \
+                            .filter(most_recent_state = state_id, current=True)
+            members = quorum_api.GET()
+
+            member_ids = [member["id"] for member in members["objects"]]
+            members_by_state[state_name] = member_ids
+            print members_by_state
+        return members_by_state
 
     def get_word_mentions_per_state(self, word):
         """
         For the given word, get the number of documents per state that it is mentioned in.
         Write this to the data.csv file.
         """
+        members_by_state = self.parse_members_by_state_json()
+
+        mentions_per_state = {}
+        quorum_api = self.quorum_api.set_endpoint("document") \
+                            .count(True) \
+                            .limit(100) \
+
+        for state, member_lst in members_by_state.iteritems():
+            quorum_api = quorum_api.filter(count_only = True, advanced_search = word, source_person__in = member_lst)
+            results = quorum_api.GET()
+            # store the number of documents for this state
+            mentions_per_state[state] = results
+        self.save_state_csv(mentions_per_state, 'data.csv')
 
 cv = ChoroplethVisualizer()
 
