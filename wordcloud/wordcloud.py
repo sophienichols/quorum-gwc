@@ -27,21 +27,22 @@ quorum_api = quorum_api.set_endpoint("document") \
                        .word_cloud(True) \
                        .filter(advanced_search="girls AND code")
 
-# results = quorum_api.GET()
+"""
+if you did the previous two steps correctly, you should now have
+a list of dictionaries. This looks something like this:
 
-# if you did the previous two steps correctly, you should now have
-# a list of dictionaries. This looks something like this:
-#
-# [
-#   {'term': 'correlation', 'frequency': 9},
-#   {'term': 'education', 'frequency': 4}
-# ]
-#
-# And we want to make it look something like this:
-# [
-#   ["correlation", 9],
-#   ["education", 4]
-# ]
+[
+  {'term': 'correlation', 'frequency': 9},
+  {'term': 'education', 'frequency': 4}
+]
+
+And we want to make it look something like this:
+[
+  ["correlation", 9],
+  ["education", 4]
+]
+"""
+results = quorum_api.GET()
 
 def convert_wordcloud_api_results(results):
     import json
@@ -52,7 +53,7 @@ def convert_wordcloud_api_results(results):
 
     return json.dumps(list_of_lists)
 
-# print convert_wordcloud_api_results(results)
+print convert_wordcloud_api_results(results)
 
 # now take those results, paste them into index.html,
 # and take a look at them in your browser!
@@ -78,20 +79,33 @@ class WordCloud(object):
     limit = 200
 
     def clean_and_split(self, text):
+        """
+        This function takes in a string of text and returns a cleaned
+        and split list of important words.
+        """
 
-        # remove all the urls from the text
-        url_subbed_text = re.sub(self.URL_REGEX,
-                                 "",
-                                 text)
+        # Clean the text by removing URLs and punctuation
+        ### TODO
 
-        # Remove all punctuation
-        punctuation_subbed_text = re.sub(self.PUNCTUATION_REGEX,
-                                         "",
-                                         url_subbed_text)
 
-        return [word for word in punctuation_subbed_text.split(' ') if word not in stop_words and word != '']
+        # Remove unimportant words that we don't want in the cloud
+        ### TODO
+
+
+        # Split the text into a list of words
+        ### TODO
+
+
+        # Return our result
+        return list_of_clean_words
+
 
     def process(self, api_results):
+        """
+        This function takes in the results from an API request
+        and return a list of frequency tuples of words
+        """
+
         # first, combine all the documents into one giant string
         full_string = ''
         for document in api_results["objects"]:
@@ -101,7 +115,7 @@ class WordCloud(object):
         full_string = self.clean_and_split(full_string)
 
         frequency_tuples = Counter(full_string).most_common(self.limit)
-
+        print frequency_tuples
         return frequency_tuples
 
 wc = WordCloud()
