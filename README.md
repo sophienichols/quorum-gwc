@@ -50,3 +50,5 @@ Once you've gotten to a place in your code where you want to "save", it's time t
 3. Double check to make sure that there are no merge conflicts. If there are any, you should pull the master branch, merge it into your branch, fix any conflicts, and then
 4. In the request that you submit, you should describe what you did as well as assign people who should review this code.
 5. Congrats, you have submitted a pull request!
+
+hey fam whattup
