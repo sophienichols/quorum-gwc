@@ -33,6 +33,7 @@ class BillStatus(object):
     to_executive = 5
     enacted = 6
 
+    at_least_introduced = (introduced, out_of_committee, passed_first, passed_second, to_executive, enacted)
     at_least_out_of_committee = (out_of_committee, passed_first, passed_second, to_executive, enacted)
     at_least_passed_first = (passed_first, passed_second, to_executive, enacted)
     at_least_passed_second = (passed_second, to_executive, enacted)
