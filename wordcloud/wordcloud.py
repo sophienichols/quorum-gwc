@@ -27,7 +27,7 @@ quorum_api = quorum_api.set_endpoint("document") \
                        .word_cloud(True) \
                        .filter(advanced_search="girls AND code")
 
-# results = quorum_api.GET()
+results = quorum_api.GET()
 
 # if you did the previous two steps correctly, you should now have
 # a list of dictionaries. This looks something like this:
@@ -52,7 +52,7 @@ def convert_wordcloud_api_results(results):
 
     return json.dumps(list_of_lists)
 
-# print convert_wordcloud_api_results(results)
+print convert_wordcloud_api_results(results)
 
 # now take those results, paste them into index.html,
 # and take a look at them in your browser!
