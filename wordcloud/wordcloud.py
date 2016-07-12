@@ -8,7 +8,6 @@ from collections import Counter
 from enums import DocumentType
 from stop_words import stop_words
 
-print 'HELLO'
 # first, we subclass the QuorumAPI to support wordclouds.
 # to do this, we'll use the same approach as the count function
 # in order to make the final API request have &word_cloud=true
@@ -45,27 +44,40 @@ And we want to make it look something like this:
 """
 results = quorum_api.GET()
 
+
 def convert_wordcloud_api_results(results):
     import json
 
-    list_of_lists = []
-    for result in results:
-        list_of_lists.append([result["term"], result["frequency"]])
+    # Create a list of lists
+    ### TODO
 
-    print list_of_lists
-    print 'YOLO'
-    return json.dumps(list_of_lists)
 
-# print convert_wordcloud_api_results(results)
+    # Make a list of term and frequency for each result, and
+    # add it to the list of lists
+    ### TODO
+
+
+    # Read the list of lists into json format using
+    # json.dumps()
+    ### TODO
+
+
+    # Return our dumped list of lists
+    return dumped_list_of_lists
+
+
+# Now lets look at the results:
+print convert_wordcloud_api_results(results)
 
 # now take those results, paste them into index.html,
 # and take a look at them in your browser!
+
 
 # Extra Credit:
 # Now let's write our own wordcloud function that looks at documents directly.
 quorum_api = quorum_api.word_cloud(False) \
                        .limit(1000) \
-                       .filter(document_type = DocumentType.tweet)
+                       .filter(""" TODO """)
 new_results = quorum_api.GET()
 
 
@@ -81,78 +93,51 @@ class WordCloud(object):
     PUNCTUATION_REGEX = "[%s]" % re.escape(PUNCTUATION_TO_ESCAPE)
     limit = 200
 
-    # def clean_and_split(self, text):
-    #     """
-    #     This function takes in a string of text and returns a cleaned
-    #     and split list of important words.
-    #     """
-
-    #     # Clean the text by removing URLs and punctuation
-    #     ### TODO
-
-
-    #     # Remove unimportant words that we don't want in the cloud
-    #     ### TODO
-
-
-    #     # Split the text into a list of words
-    #     ### TODO
-
-
-    #     # Return our result
-    #     return list_of_clean_words
-
-
-    # def process(self, api_results):
-    #     """
-    #     This function takes in the results from an API request
-    #     and return a list of frequency tuples of words
-    #     """
-
-    #     # Combine all the words from all the documents
-    #     # into one big string!
-    #     ### TODO
-
-
-    #     # Remove all the punctuation
-    #     ### TODO
-
-
-    #     # Make a list of frequency lists
-    #     ### TODO
-
-
-    #     # Return our results
-    #     ### TODO
-
     def clean_and_split(self, text):
+        """
+        This function takes in a string of text and returns a cleaned
+        and split list of important words.
+        """
 
-        # remove all the urls from the text
-        url_subbed_text = re.sub(self.URL_REGEX,
-                                 "",
-                                 text)
+        # Clean the text by removing URLs and punctuation
+        ### TODO
 
-        # Remove all punctuation
-        punctuation_subbed_text = re.sub(self.PUNCTUATION_REGEX,
-                                         "",
-                                         url_subbed_text)
 
-        return [word for word in punctuation_subbed_text.split(' ') if word not in stop_words and word != '']
+        # Remove unimportant words that we don't want in the cloud
+        ### TODO
+
+
+        # Split the text into a list of words
+        ### TODO
+
+
+        # Return our result
+        return list_of_clean_words
+
+
 
     def process(self, api_results):
-        import json
+        """
+        This function takes in the results from an API request
+        and return a list of frequency tuples of words
+        """
 
-        # first, combine all the documents into one giant string
-        full_string = ''
-        for document in api_results["objects"]:
-            full_string += document["raw_content"]
+        # Combine all the words from all the documents
+        # into one big string!
+        ### TODO
 
-        # now, remove all punctuation
-        full_string = self.clean_and_split(full_string)
 
-        frequency_tuples = Counter(full_string).most_common(self.limit)
+        # Remove all the punctuation
+        ### TODO
 
-        return json.dumps(frequency_tuples)
 
-wc = WordCloud()
-print wc.process(new_results)
+        # Make a list of frequency lists
+        ### TODO
+
+
+        # Return our results
+        return results
+
+
+# Create a WordCloud object and get the results
+### TODO
