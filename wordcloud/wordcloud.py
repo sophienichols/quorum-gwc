@@ -44,25 +44,40 @@ And we want to make it look something like this:
 """
 results = quorum_api.GET()
 
+
 def convert_wordcloud_api_results(results):
     import json
 
-    list_of_lists = []
-    for result in results:
-        list_of_lists.append([result["term"], result["frequency"]])
+    # Create a list of lists
+    ### TODO
 
-    return json.dumps(list_of_lists)
 
+    # Make a list of term and frequency for each result, and
+    # add it to the list of lists
+    ### TODO
+
+
+    # Read the list of lists into json format using
+    # json.dumps()
+    ### TODO
+
+
+    # Return our dumped list of lists
+    return dumped_list_of_lists
+
+
+# Now lets look at the results:
 print convert_wordcloud_api_results(results)
 
 # now take those results, paste them into index.html,
 # and take a look at them in your browser!
 
+
 # Extra Credit:
 # Now let's write our own wordcloud function that looks at documents directly.
 quorum_api = quorum_api.word_cloud(False) \
                        .limit(1000) \
-                       .filter(document_type = DocumentType.tweet)
+                       .filter(""" TODO """)
 new_results = quorum_api.GET()
 
 
@@ -100,23 +115,29 @@ class WordCloud(object):
         return list_of_clean_words
 
 
+
     def process(self, api_results):
         """
         This function takes in the results from an API request
         and return a list of frequency tuples of words
         """
 
-        # first, combine all the documents into one giant string
-        full_string = ''
-        for document in api_results["objects"]:
-            full_string += document["raw_content"]
+        # Combine all the words from all the documents
+        # into one big string!
+        ### TODO
 
-        # now, remove all punctuation
-        full_string = self.clean_and_split(full_string)
 
-        frequency_tuples = Counter(full_string).most_common(self.limit)
-        print frequency_tuples
-        return frequency_tuples
+        # Remove all the punctuation
+        ### TODO
 
-wc = WordCloud()
-# print wc.process(new_results)
+
+        # Make a list of frequency lists
+        ### TODO
+
+
+        # Return our results
+        return results
+
+
+# Create a WordCloud object and get the results
+### TODO
