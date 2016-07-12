@@ -8,6 +8,7 @@ from collections import Counter
 from enums import DocumentType
 from stop_words import stop_words
 
+
 # first, we subclass the QuorumAPI to support wordclouds.
 # to do this, we'll use the same approach as the count function
 # in order to make the final API request have &word_cloud=true
@@ -27,43 +28,32 @@ quorum_api = quorum_api.set_endpoint("document") \
                        .word_cloud(True) \
                        .filter(advanced_search="girls AND code")
 
-"""
-if you did the previous two steps correctly, you should now have
-a list of dictionaries. This looks something like this:
 
-[
-  {'term': 'correlation', 'frequency': 9},
-  {'term': 'education', 'frequency': 4}
-]
+# if you did the previous two steps correctly, you should now have
+# a list of dictionaries. This looks something like this:
 
-And we want to make it look something like this:
-[
-  ["correlation", 9],
-  ["education", 4]
-]
-"""
+# [
+#   {'term': 'correlation', 'frequency': 9},
+#   {'term': 'education', 'frequency': 4}
+# ]
+
+# And we want to make it look something like this:
+# [
+#   ["correlation", 9],
+#   ["education", 4]
+# ]
+
+
 results = quorum_api.GET()
 
 
 def convert_wordcloud_api_results(results):
+    """
+    Takes in list of results dicts and returns a
+    lists of lists
+    """
     import json
-
-    # Create a list of lists
-    ### TODO
-
-
-    # Make a list of term and frequency for each result, and
-    # add it to the list of lists
-    ### TODO
-
-
-    # Read the list of lists into json format using
-    # json.dumps()
-    ### TODO
-
-
-    # Return our dumped list of lists
-    return dumped_list_of_lists
+    pass
 
 
 # Now lets look at the results:
@@ -75,10 +65,7 @@ print convert_wordcloud_api_results(results)
 
 # Extra Credit:
 # Now let's write our own wordcloud function that looks at documents directly.
-quorum_api = quorum_api.word_cloud(False) \
-                       .limit(1000) \
-                       .filter(""" TODO """)
-new_results = quorum_api.GET()
+### TODO
 
 
 # We're now going to create a class that processes those results
@@ -98,22 +85,7 @@ class WordCloud(object):
         This function takes in a string of text and returns a cleaned
         and split list of important words.
         """
-
-        # Clean the text by removing URLs and punctuation
-        ### TODO
-
-
-        # Remove unimportant words that we don't want in the cloud
-        ### TODO
-
-
-        # Split the text into a list of words
-        ### TODO
-
-
-        # Return our result
-        return list_of_clean_words
-
+        pass
 
 
     def process(self, api_results):
@@ -121,22 +93,7 @@ class WordCloud(object):
         This function takes in the results from an API request
         and return a list of frequency tuples of words
         """
-
-        # Combine all the words from all the documents
-        # into one big string!
-        ### TODO
-
-
-        # Remove all the punctuation
-        ### TODO
-
-
-        # Make a list of frequency lists
-        ### TODO
-
-
-        # Return our results
-        return results
+        pass
 
 
 # Create a WordCloud object and get the results
