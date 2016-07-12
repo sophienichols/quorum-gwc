@@ -119,4 +119,4 @@ class WordCloud(object):
         return frequency_tuples
 
 wc = WordCloud()
-print wc.process(new_results)
+# print wc.process(new_results)
