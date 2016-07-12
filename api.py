@@ -35,12 +35,6 @@ class QuorumAPI(object):
                            "legsession"]
     BASE_URL = "https://www.quorum.us"
 
-    # internal globals with defaults
-    _limit = 20
-    _offset = 0
-    _count = True
-    filters = {}
-
     def __init__(self, username, api_key, endpoint=None):
 
         self.username = username
@@ -48,6 +42,11 @@ class QuorumAPI(object):
         self.filters = {
                         "decode_enums": True
                        }
+
+        # internal globals with defaults
+        self._limit = 20
+        self._offset = 0
+        self._count = True
 
         if endpoint:
             self.set_endpoint(endpoint)
@@ -140,6 +139,10 @@ class QuorumAPI(object):
                     self.filters[key] = "true"
                 else:
                     self.filters[key] = "false"
+
+            # convert all list-like things to comma separated lists
+            if isinstance(value, list) or isinstance(value, tuple):
+                self.filters[key] = ",".join([str(val) for val in value])
 
         print self.filters
 

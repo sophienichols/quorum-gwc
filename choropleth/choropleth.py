@@ -15,12 +15,13 @@ class ChoroplethVisualizer(object):
     quorum_api = QuorumAPI(username="gwc", api_key="691e43c415d88cd16286edb1f78abb2e348688da")
 
     # In order to query the API properly later on, we first create a
-    # dictionary so that given a state id, we can get the list of
+    # dictionary so that given a state name, we can get the list of
     # representatives and senators from that state. 
-    # In this dictionary, the 'key' is the state's id, and the 'value'
+    # In this dictionary, the 'key' is the state's name, and the 'value'
     # is the list of associated members of Congress.
 
     def get_members_by_state(self):
+
 
         # First we create an empty dictionary that we will
         # populate with relevant information!
