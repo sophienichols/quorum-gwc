@@ -11,10 +11,6 @@ import csv
 
 class ChoroplethVisualizer(object):
 
-    # Since both the api_key and username stay the same so initialize API object once
-    quorum_api = QuorumAPI(username="gwc", api_key="691e43c415d88cd16286edb1f78abb2e348688da")
-
-
     def get_members_by_state(self):
         """
         Creates a dictionary with state names as keys
